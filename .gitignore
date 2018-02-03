@@ -1,0 +1,15 @@
+**/.DS_Store
+node_modules/*
+*.log
+npm-debug.log
+.idea
+/output/**/*
+hello/**/*
+!hello/config.xml
+!hello/package.json
+
+dump.rdb
+
+./amazon.testerurls.json
+
+server/node_modules/
