@@ -1,0 +1,75 @@
+$principleDefaultEase: cubic-bezier(0.25, 0.1, 0.25, 1);
+$easeOutExpo: cubic-bezier(0.19, 1, 0.22, 1);
+$easeOutCubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+$easeInOutCubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+$easeInOutQuad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+$easeInQuad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+$navContainerEase: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+
+:global {
+  // Fade
+  .fade-enter{
+    opacity: 0;
+    visibility: inherit;
+  }
+
+  .fade-enter-active{
+    opacity: 1;
+    visibility: inherit;
+    transition: opacity .35s $principleDefaultEase, visibility .35s;
+  }
+
+  .fade-leave{
+    opacity: 1;
+    visibility: inherit;
+  }
+
+  .fade-leave-active{
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .35s $principleDefaultEase, visibility .35s;
+  }
+
+  // Slow-Fade
+  .slow-fade-enter{
+    opacity: 0;
+    visibility: inherit;
+  }
+
+  .slow-fade-enter-active{
+    opacity: 1;
+    visibility: inherit;
+    transition: opacity .65s $principleDefaultEase, visibility .65s;
+  }
+
+  .slow-fade-leave{
+    opacity: 1;
+    visibility: inherit;
+  }
+
+  .slow-fade-leave-active{
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .65s $principleDefaultEase, visibility .65s;
+  }
+
+  // Spinner
+  .spinner-enter{
+    opacity: 0;
+  }
+
+  .spinner-enter-active{
+    opacity: 1;
+    transition: opacity .5s;
+  }
+
+  .spinner-leave{
+    opacity: 1;
+  }
+
+  .spinner-leave-active{
+    opacity: 0;
+    transition: opacity .5s;
+  }
+}

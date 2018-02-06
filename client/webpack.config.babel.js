@@ -2,7 +2,6 @@ const path = require('path');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 
 const platform = process.env.PLATFORM;
@@ -90,11 +89,8 @@ const createConfig = (env, global_compile_constants={}) => {
 				template: './src/html/index.ejs',
 				favicon: './src/images/favicon.ico',
 				title: 'Reuters TV: Live Breaking News, US, World, Business, Finance',
-				alwaysWriteToDisk: true,
 				filename: 'index.html',
 		    }),
-
-			new HtmlWebpackHarddiskPlugin(),
 
 			new WebpackPwaManifest({
 				'name': 'Reuters TV: Live Breaking News, US, World, Business, Finance',

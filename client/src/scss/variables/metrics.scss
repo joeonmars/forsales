@@ -1,0 +1,17 @@
+// Metrics can be referenced globally
+$header-height: 102px;
+$mobile-header-height: 70px;
+$rightrail-width: 300px;
+$content-max-width: 1200px;
+$screen-edge-large: 10%;
+$screen-edge-medium: 40px;
+$screen-edge-small: 20px;
+
+// Default principal cubic bezier
+$default-easing: cubic-bezier(0.25, 0.10, 0.25, 1.00);
+$default-timing: 300ms;
+
+// Header variables
+$header-height: 100px;
+$header-compact-height: 70px;
+$topbar-height: 46px;

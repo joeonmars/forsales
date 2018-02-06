@@ -1,0 +1,85 @@
+// This file will only output generated css once.
+// Put your global html, body, font imports, etc. here.
+
+// Compass reset
+@import 'compass/reset';
+
+// Import all style stuff
+@import 'config';
+
+// All font imports
+@import 'imports/fonts';
+
+// Default styles
+:global {
+  html{
+    @include knowledge-regular;
+    @include absoluteFullSize;
+    min-width: 720px;
+    min-height: 480px;
+    font-size: 10px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    border: none;
+    outline: none;
+    margin: 0;
+    padding: 0;
+    color: inherit;
+    background-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    @include user-select('none');
+    @include appearance(none);
+    cursor: pointer;
+    font-size: inherit;
+  }
+
+  video{
+    &::cue {
+        display: none;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    &::-webkit-media-text-track-container {
+        display: none;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    &::-webkit-media-text-track-background {
+        display: none;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+
+    &::-webkit-media-text-track-display {
+        display: none;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    track {
+        display: none;
+        opacity: 0;
+        visibility: hidden;
+    }
+  }
+
+  *:focus{
+    outline:none;
+  }
+}

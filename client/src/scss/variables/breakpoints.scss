@@ -1,0 +1,5 @@
+// The responsive breakpoints
+$hd: (max-width 1280px), (max-height 720px);
+
+// 960x540 (qHD) is the resolution of low-ends smartphones.
+$qhd: (max-width 960px), (max-height 540px);

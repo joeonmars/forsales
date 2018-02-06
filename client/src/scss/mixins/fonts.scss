@@ -1,0 +1,35 @@
+@mixin knowledge-light {
+	font-family: knowledge-light, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+@mixin knowledge-regular {
+	font-family: knowledge-regular, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+@mixin knowledge-medium {
+	font-family: knowledge-medium, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+@mixin knowledge-bold {
+	font-family: knowledge-bold, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+@mixin serif-regular {
+	font-family: serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+@mixin serif-medium {
+	font-family: serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+@mixin truncate-single-line{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
