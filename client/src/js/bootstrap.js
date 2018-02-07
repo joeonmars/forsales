@@ -1,14 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
+import { createEpicMiddleware } from 'redux-observable';
 import createHashHistory from 'history/createHashHistory';
+import io from 'socket.io-client';
 import reducers from 'js/reducers';
+import epics from 'js/middlewares/epics';
 import App from './App.jsx';
 
 
 window.addEventListener('load', () => {
 
-	const middlewares = [];
+	const middlewares = [
+		createEpicMiddleware(epics),
+	];
 
 	const composedCreateStore = compose(
       applyMiddleware(...middlewares),
@@ -30,9 +35,14 @@ window.addEventListener('load', () => {
 
 const getClientState = ({history}) => {
 
+	const socket = io('http://localhost:4200', {
+		autoConnect: false,
+	});
+
 	return {
 		app: {
-
+			is_pinging: false,
+			socket,
 		},
 	};
 }

@@ -19,6 +19,8 @@ export default class Playground extends Component {
 
 	constructor(props) {
 		super(props);
+
+		this.createRoom = this.createRoom.bind(this);
 	}
 
 	componentWillMount() {
@@ -31,6 +33,7 @@ export default class Playground extends Component {
 
 	componentDidMount() {
 
+		/*
 		const socket = io('http://localhost:4200');
 
 		socket.on('connect', () => {
@@ -43,13 +46,27 @@ export default class Playground extends Component {
 
 		socket.on('disconnect', () => {
 			console.log('disconnect');
-		});
+		});*/
+	}
+
+	createRoom() {
+		//this.props.ping();
+		this.props.connectLobby();
 	}
 
 	render() {
 		return (
 			<div className={styles('container')}>
+
 				{`Hello ${this.state.name}`}
+
+				<button
+					className={styles('create-room-button')}
+					onClick={this.createRoom}
+				>
+					Create Room {this.props.is_pinging.toString()}
+				</button>
+
 			</div>
 		);
 	}

@@ -4,18 +4,38 @@ const app = express();
 const server = require('http').createServer(app);  
 
 const io = require('socket.io')(server);
-const all_sockets = [];
+
+
+const Chance = require('chance');
+
+
+// Create a game table
+/*
+const Table = require('./models/Table.js');
+const table = new Table({
+	max_players: 3,
+	name: 'Test Table',
+	owner_id: 'asdasd',
+});
+*/
+
+const all_sockets = {};
+const all_tables = {};
+
+
 
 io.on('connect', socket => {  
     console.log('Client connected!', socket.id);
-    all_sockets.push(socket);
+    all_sockets[socket.id] = socket;
 
-    socket.emit('server:connected', 'hello');
+    socket.on('GET_TABLES', () => {
+    	console.log(`${socket.id} asked for tables.`);
+    	socket.emit('LIST_TABLES', all_tables);
+	});
 
     socket.on('disconnect', () => {
     	console.log('Client disconnect!', socket.id);
-		const i = all_sockets.indexOf(socket);
-		all_sockets.splice(i, 1);
+		delete all_sockets[socket.id];
 	});
 });
 
