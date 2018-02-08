@@ -28,9 +28,10 @@ io.on('connect', socket => {
     console.log('Client connected!', socket.id);
     all_sockets[socket.id] = socket;
 
-    socket.on('GET_TABLES', () => {
-    	console.log(`${socket.id} asked for tables.`);
-    	socket.emit('LIST_TABLES', all_tables);
+    socket.on('GET_TABLES', (payload, callback) => {
+    	console.log(`${socket.id} asked for tables.`, payload);
+    	//socket.emit('LIST_TABLES', all_tables);
+    	callback(all_tables);
 	});
 
     socket.on('disconnect', () => {
