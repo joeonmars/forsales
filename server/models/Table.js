@@ -7,7 +7,7 @@ const TableSchema = new mongoose.Schema({
   max_players: Number,
   players_count: Number,
   name: String,
-  owner_id: mongoose.Schema.Types.ObjectId,
+  owner_id: String,
 });
 
 

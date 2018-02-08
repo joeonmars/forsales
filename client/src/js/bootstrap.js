@@ -35,8 +35,9 @@ window.addEventListener('load', () => {
 
 const getClientState = ({history}) => {
 
-	const socket = io('http://localhost:4200', {
+	const socket = window.socket = io('http://localhost:4200/lobby', {
 		autoConnect: false,
+		reconnection: false,
 	});
 
 	return {

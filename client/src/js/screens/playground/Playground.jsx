@@ -20,14 +20,14 @@ export default class Playground extends Component {
 	constructor(props) {
 		super(props);
 
-		this.createRoom = this.createRoom.bind(this);
+		this.chance = new Chance();
+
+		this.handleClickNewTable = this.handleClickNewTable.bind(this);
 	}
 
 	componentWillMount() {
-		const chance = new Chance();
-
 		this.setState({
-			name: chance.name(),
+			name: this.chance.name(),
 		});
 	}
 
@@ -49,22 +49,29 @@ export default class Playground extends Component {
 		});*/
 	}
 
-	createRoom() {
-		//this.props.ping();
-		this.props.connectLobby();
+	handleClickNewTable() {
+		this.props.newTable({
+			name: this.chance.sentence({words: 4}),
+			max_players: 6,
+		});
 	}
 
 	render() {
 		return (
 			<div className={styles('container')}>
 
-				{`Hello ${this.state.name}`}
+				<button
+					className={styles('enter-lobby-button')}
+					onClick={this.props.connectLobby}
+				>
+					Enter Game Lobby
+				</button>
 
 				<button
-					className={styles('create-room-button')}
-					onClick={this.createRoom}
+					className={styles('new-table-button')}
+					onClick={this.handleClickNewTable}
 				>
-					Create Room {this.props.is_pinging.toString()}
+					New Table
 				</button>
 
 			</div>

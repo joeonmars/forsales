@@ -18,6 +18,9 @@ const mapDispatchToProps = (dispatch) => {
 		connectLobby: () => {
 			dispatch(Action.connectLobby());
 		},
+		newTable: settings => {
+			dispatch(Action.newTable(settings));
+		},
 	};
 }
 

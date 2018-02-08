@@ -1,5 +1,5 @@
 import { ofType } from 'redux-observable';
-import { delay, mapTo, map, mergeMap, take, merge, concat, zip, switchMap, skipWhile } from 'rxjs/operators';
+import { delay, mapTo, map, mergeMap, takeUntil, merge, catchError, zip, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Type, Action } from 'js/actions/app';
 
@@ -31,6 +31,9 @@ const connectLobby = (action$, store) => {
 	return action$.pipe(
   		ofType(Type.CONNECT_LOBBY),
   		switchMap(action => {
+  			socket.sendBuffer.length = 0;
+  			socket.receiveBuffer.length = 0;
+
   			if (socket.connected) {
   				return Observable.of(socket);
   			} else {
@@ -45,7 +48,40 @@ const connectLobby = (action$, store) => {
 	);
 }
 
+const disconnectLobby = (action$, store) => {
+
+	const {
+		socket,
+	} = store.getState().app;
+
+	return action$.pipe(
+  		ofType(Type.CONNECT_LOBBY),
+  		switchMap(action => Observable.fromEvent(socket, 'disconnect')),
+  		map(() => {
+  			return Action.disconnectLobby();
+  		}),
+	);
+}
+
+const newTable = (action$, store) => {
+
+	const {
+		socket,
+	} = store.getState().app;
+
+	return action$.pipe(
+  		ofType(Type.NEW_TABLE),
+  		switchMap(action => observeSocket(socket, 'NEW_TABLE', action.settings)),
+  		map(table => {
+  			console.log('table', table);
+  			return Action.newTableSucceed(table);
+  		}),
+	);
+}
+
 export default [
 	ping,
 	connectLobby,
+	disconnectLobby,
+	newTable,
 ];
