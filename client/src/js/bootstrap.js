@@ -42,7 +42,8 @@ const getClientState = ({history}) => {
 
 	return {
 		app: {
-			is_pinging: false,
+			login_pending: false,
+			login_succeeded: false,
 			socket,
 		},
 	};

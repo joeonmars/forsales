@@ -1,0 +1,15 @@
+<ul>
+	<li>id: {{id}}</li>
+	<li>name: {{name}}</li>
+	<li>gender: {{gender}}</li>
+	<li>email: {{email}}</li>
+	<li>platform: {{platform}}</li>
+	<li><img src={{photo}} width="100"/></li>
+</ul>
+
+<script>
+	window.opener.postMessage({
+		type: 'LOGIN_SUCCESS',
+		id: "{{id}}",
+	}, "*");
+</script>

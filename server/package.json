@@ -12,9 +12,11 @@
     "chance": "^1.0.13",
     "express": "^4.16.2",
     "express-handlebars": "^3.0.0",
+    "lodash": "^4.17.5",
     "mongoose": "^5.0.3",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
+    "passport-wechat": "^2.0.4",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {

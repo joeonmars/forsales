@@ -4,17 +4,19 @@ import { Type } from 'js/actions/app';
 const appReducer = (state = {}, action) => {
 
   switch (action.type) {
-  	case Type.PING:
+  	case Type.LOGIN:
   		return {
   			...state,
-  			is_pinging: true,
+  			login_pending: true,
+  			login_succeeded: false,
   		};
   		break;
 
-  	case Type.PONG:
+  	case Type.LOGIN_SUCCEED:
   		return {
   			...state,
-  			is_pinging: false,
+  			login_pending: false,
+  			login_succeeded: true,
   		};
   		break;
 

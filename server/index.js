@@ -7,15 +7,15 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const nsp = io.of('/lobby');
 
+const _ = require('lodash');
 const passport = require('./passport');
 
 // Configure view engine to render
-// Create `ExpressHandlebars` instance with a default layout.
-const hbs = exphbs.create({
-    defaultLayout: 'main',
-});
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
+app.engine('.hbs', exphbs({
+	defaultLayout: 'main',
+	extname: '.hbs',
+}));
+app.set('view engine', '.hbs');
 
 // Initialize Passport and restore authentication state,
 // if any, from the session.
@@ -28,17 +28,42 @@ app.get('/login/facebook',
 );
 
 app.get('/login/facebook/callback', (req, res, next) => {
-  passport.authenticate('facebook', 
+  passport.authenticate('facebook', {scope: ['email']}, 
   	(err, user, info) => {
-  		if (err) {
+		if (err) {
   			return next(err);
   		}
-
   		if (!user) {
   			console.log(info);
-  		}
+  			res.json(info);
+  		} else {
+  			//res.json(user);
+	  		const {
+	  			id,
+	  			gender,
+	  			displayName,
+	  		} = user;
 
-    	res.json(user);
+  			const name = displayName || 
+  				_.compact([
+	  				_.get(user, 'name.givenName'),
+	  				_.get(user, 'name.middleName'),
+	  				_.get(user, 'name.familyName')
+	  			]).join(' ');
+
+	  		const photo = _.get(user, 'photos[0].value');
+
+	  		const email = _.get(user, 'emails[0].value');
+
+			res.render('login_success', {
+				id,
+				name,
+				gender,
+				photo,
+				email,
+				platform: 'facebook',
+            });
+  		}
   	})(req, res, next)
 });
 

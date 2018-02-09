@@ -1,6 +1,7 @@
 import { ofType } from 'redux-observable';
-import { delay, mapTo, map, mergeMap, takeUntil, merge, catchError, zip, switchMap } from 'rxjs/operators';
+import { delay, mapTo, map, mergeMap, takeUntil, skipWhile, merge, catchError, zip, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import Popup from 'popup-window';
 import { Type, Action } from 'js/actions/app';
 
 
@@ -63,6 +64,35 @@ const disconnectLobby = (action$, store) => {
 	);
 }
 
+const login = (action$, store) => {
+
+	return action$.pipe(
+		ofType(Type.LOGIN),
+		switchMap(action =>
+			Observable.of({
+				popup: new Popup('http://localhost:4200/login/facebook').open(),
+				action,
+			})
+		),
+  		switchMap(({popup, action}) => 
+			Observable.fromEvent(window, 'message')
+				.skipWhile(e => {
+					if (e.data && e.data.type === 'LOGIN_SUCCESS') {
+						popup.close();
+						return false;
+					} else {
+						return true;
+					}
+				})
+				.takeUntil(action$.ofType(Type.LOGIN_SUCCEED))
+  		),
+		map(e => {
+			console.log(`user_id is ${e.data.id}`);
+			return Action.loginSucceed(e.data.id);
+		}),
+	);
+}
+
 const newTable = (action$, store) => {
 
 	const {
@@ -81,6 +111,7 @@ const newTable = (action$, store) => {
 
 export default [
 	ping,
+	login,
 	connectLobby,
 	disconnectLobby,
 	newTable,

@@ -5,7 +5,8 @@ import { Action } from 'js/actions/app';
 const mapStateToProps = (state) => {
 
 	return {
-		is_pinging: state.app.is_pinging,
+		login_pending: state.app.login_pending,
+		login_succeeded: state.app.login_succeeded,
 	};
 }
 
@@ -20,6 +21,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		newTable: settings => {
 			dispatch(Action.newTable(settings));
+		},
+		loginWithFacebook: () => {
+			dispatch(Action.login('facebook'));
 		},
 	};
 }

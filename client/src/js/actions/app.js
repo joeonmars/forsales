@@ -7,6 +7,8 @@ const Type = {
 	GET_TABLES: 'GET_TABLES',
 	NEW_TABLE: 'NEW_TABLE',
 	NEW_TABLE_SUCCEED: 'NEW_TABLE_SUCCEED',
+	LOGIN: 'LOGIN',
+	LOGIN_SUCCEED: 'LOGIN_SUCCEED',
 }
 
 const Action = {
@@ -57,6 +59,20 @@ const Action = {
 		return {
 			type: Type.NEW_TABLE_SUCCEED,
 			table,
+		}
+	},
+
+	login: platform => {
+		return {
+			type: Type.LOGIN,
+			platform,
+		}
+	},
+
+	loginSucceed: user_id => {
+		return {
+			type: Type.LOGIN_SUCCEED,
+			user_id,
 		}
 	},
 }

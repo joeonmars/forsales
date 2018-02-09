@@ -32,7 +32,6 @@ export default class Playground extends Component {
 	}
 
 	componentDidMount() {
-
 		/*
 		const socket = io('http://localhost:4200');
 
@@ -59,6 +58,13 @@ export default class Playground extends Component {
 	render() {
 		return (
 			<div className={styles('container')}>
+
+				<button
+					className={styles('login-button')}
+					onClick={this.props.loginWithFacebook}
+				>
+					Login with Facebook
+				</button>
 
 				<button
 					className={styles('enter-lobby-button')}
