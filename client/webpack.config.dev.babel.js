@@ -26,8 +26,8 @@ Object.assign(config, {
 			'Access-Control-Allow-Origin': '*',
 		},
 		proxy: {
-			'/roku/**': {
-				target: 'https://www.reuters.tv/',
+			'/user/**': {
+				target: 'http://localhost:4200/',
 				secure: false,
 			}
 		},

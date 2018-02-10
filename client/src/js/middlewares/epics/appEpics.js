@@ -1,6 +1,7 @@
 import { ofType } from 'redux-observable';
 import { delay, mapTo, map, mergeMap, takeUntil, skipWhile, merge, catchError, zip, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ajax } from 'rxjs/observable/dom/ajax';
 import Popup from 'popup-window';
 import { Type, Action } from 'js/actions/app';
 
@@ -70,7 +71,7 @@ const login = (action$, store) => {
 		ofType(Type.LOGIN),
 		switchMap(action =>
 			Observable.of({
-				popup: new Popup('http://localhost:4200/login/facebook').open(),
+				popup: new Popup(`http://localhost:4200/login/${action.platform}`).open(),
 				action,
 			})
 		),
@@ -86,9 +87,13 @@ const login = (action$, store) => {
 				})
 				.takeUntil(action$.ofType(Type.LOGIN_SUCCEED))
   		),
-		map(e => {
-			console.log(`user_id is ${e.data.id}`);
-			return Action.loginSucceed(e.data.id);
+		switchMap(e => {
+			const user_id = e.data.id;
+			console.log(`user_id is ${user_id}`);
+			return ajax.getJSON(`http://localhost:4200/user/${user_id}`);
+		}),
+		map(response => {
+			return Action.loginSucceed(response);
 		}),
 	);
 }

@@ -17,6 +17,7 @@ const appReducer = (state = {}, action) => {
   			...state,
   			login_pending: false,
   			login_succeeded: true,
+        user: action.user,
   		};
   		break;
 

@@ -9,6 +9,8 @@ const Type = {
 	NEW_TABLE_SUCCEED: 'NEW_TABLE_SUCCEED',
 	LOGIN: 'LOGIN',
 	LOGIN_SUCCEED: 'LOGIN_SUCCEED',
+	FETCH_USER_PROFILE: 'FETCH_USER_PROFILE',
+	FETCH_USER_PROFILE_SUCCEED: 'FETCH_USER_PROFILE_SUCCEED',
 }
 
 const Action = {
@@ -69,10 +71,24 @@ const Action = {
 		}
 	},
 
-	loginSucceed: user_id => {
+	loginSucceed: user => {
 		return {
 			type: Type.LOGIN_SUCCEED,
+			user,
+		}
+	},
+
+	fetchUserProfile: user_id => {
+		return {
+			type: Type.FETCH_USER_PROFILE,
 			user_id,
+		}
+	},
+
+	fetchUserProfileSucceed: user => {
+		return {
+			type: Type.FETCH_USER_PROFILE_SUCCEED,
+			user,
 		}
 	},
 }

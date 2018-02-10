@@ -45,6 +45,7 @@ const getClientState = ({history}) => {
 			login_pending: false,
 			login_succeeded: false,
 			socket,
+			user: null,
 		},
 	};
 }
