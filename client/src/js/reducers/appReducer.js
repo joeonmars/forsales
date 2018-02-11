@@ -35,7 +35,8 @@ const appReducer = (state = {}, action) => {
     case Type.UPDATE_LOBBY:
       return {
         ...state,
-        all_users: action.all_users,
+        all_users: action.all_users || state.all_users,
+        all_tables: action.all_tables || state.all_tables,
       }
 
     default:

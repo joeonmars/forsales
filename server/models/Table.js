@@ -1,16 +1,27 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 6;
 
-const TableSchema = new mongoose.Schema({
+
+const TableSchema = new Schema({
   max_players: Number,
-  players_count: Number,
   name: String,
-  owner_id: String,
+  owner: { type: Schema.Types.ObjectId, ref: 'User' },
+  players: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+});
+
+TableSchema.virtual('id').get(function(){
+  return this._id.toHexString();
+});
+
+TableSchema.set('toJSON', {
+  virtuals: true,
 });
 
 
 const Table = mongoose.model('Table', TableSchema);
+
 
 module.exports = Table;

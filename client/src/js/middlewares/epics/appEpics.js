@@ -74,8 +74,8 @@ const updateLobby = (action$, store) => {
   		}),
   		map(({tables, users}) => {
   			return Action.updateLobby({
-  				tables,
-  				users,
+  				all_tables: tables,
+  				all_users: users,
   			});
   		}),
 	);

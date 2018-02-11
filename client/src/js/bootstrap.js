@@ -41,6 +41,7 @@ const getClientState = ({history}) => {
 			socket: null,
 			user: null,
 			all_users: [],
+			all_tables: [],
 		},
 	};
 }

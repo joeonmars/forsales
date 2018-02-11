@@ -1,0 +1,44 @@
+.container{
+	margin: 3rem;
+}
+
+.table{
+	margin: .5rem;
+	width: 25rem;
+	height: 14rem;
+	background: tan;
+	padding: 1rem;
+	box-sizing: border-box;
+
+	h1{
+		font-size: 1.4rem;
+	}
+	h2 {
+		font-size: 1.4rem;
+	}
+}
+
+.player{
+	position: relative;
+
+	&.owner:before{
+		content: 'owner';
+		position: absolute;
+		top: -1.2rem;
+		font-size: 1.2rem;
+		text-align: center;
+		width: 100%;
+	}
+}
+
+.seat{
+	display: inline-block;
+	vertical-align: middle;
+	margin: .45rem;
+	padding: .3rem;
+	box-sizing: border-box;
+	width: 3.5rem;
+	height: 3.5rem;
+	border-radius: 100%;
+	background: tan;
+}

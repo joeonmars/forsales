@@ -112,16 +112,7 @@ const Table = require('./models/Table.js');
 const user_id_list = [];
 const all_tables = {};
 
-
-
-
 const lobby_emitter = new EventEmitter();
-lobby_emitter.on('CONNECT_CLIENT', socket => {
-	console.log(`socket connected: ${socket.id}`);
-});
-lobby_emitter.on('DISCONNECT_CLIENT', socket => {
-	console.log(`socket disconnected: ${socket.id}`);
-});
 
 
 nsp.on('connect', socket => {
@@ -132,6 +123,7 @@ nsp.on('connect', socket => {
 Rx.Observable
 	.fromEvent(lobby_emitter, 'CONNECT_CLIENT')
 	.switchMap(socket => {
+		console.log(`socket connected: ${socket.id}`);
 		registerSocket(socket);
 		listenForSocket(socket);
 		return Rx.Observable.of(socket);
@@ -149,6 +141,7 @@ Rx.Observable
 Rx.Observable
 	.fromEvent(lobby_emitter, 'DISCONNECT_CLIENT')
 	.switchMap(socket => {
+		console.log(`socket disconnected: ${socket.id}`);
 		unregisterSocket(socket);
 		return Rx.Observable.of(socket);
 	})
@@ -162,9 +155,24 @@ Rx.Observable
 		nsp.emit('UPDATE_LOBBY', data);
 	});
 
+Rx.Observable
+	.fromEvent(lobby_emitter, 'NEW_TABLE')
+	.switchMap(table => {
+		console.log(`user ${table.owner.id} created a new table`);
+		all_tables[table.id] = table;
+		return Rx.Observable.of(table);
+	})
+	.auditTime(500)
+	.subscribe(table => {
+		const data = {
+			tables: _.values(all_tables),
+		}
+		nsp.emit('UPDATE_LOBBY', data);
+	});
+
 const observeLobbyUpdate = () => {
 	const users_promise = User.findByIdList(user_id_list);
-	const all_promise = Promise.all([all_tables, users_promise]);
+	const all_promise = Promise.all([_.values(all_tables), users_promise]);
 	return Rx.Observable.fromPromise(all_promise);
 }
 
@@ -195,41 +203,31 @@ const unregisterSocket = socket => {
 
 const listenForSocket = socket => {
 
-	/*
-    socket.on('GET_LOBBY_INFO', (payload, callback) => {
-    	console.log(`${socket.id} asked for lobby info.`);
-
-    	// Get all users via promise
-		const all_users_promise = User.findByIdList(user_id_list);
-		
-		// Send both tables and users to client
-		Promise.all([all_tables, all_users_promise])
-			.then(results => {
-				callback({
-					tables: results[0],
-					users: results[1],
-				});
-			});
-	});*/
+	const {
+		user_id,
+	} = socket.handshake.query;
 
     socket.on('NEW_TABLE', (payload, callback) => {
-    	console.log(`${socket.id} creates a new table.`);
-
     	// create a new table
     	const {
     		max_players,
     		name,
     	} = payload;
 
-    	const new_table = new Table({
+    	const table = new Table({
 			max_players,
 			name,
-			owner_id: socket.id,
+			owner: user_id,
+			players: [user_id],
 		});
 
-    	all_tables[new_table.id] = new_table;
-
-    	callback(new_table);
+		Table.populate(table, {
+			path: 'owner players',
+			select: 'id name custom_photo avatar',
+		}).then(t => {
+			callback(t);
+			lobby_emitter.emit('NEW_TABLE', t);
+		});
 	});
 
     socket.on('disconnect', () => {

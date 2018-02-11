@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Chance from 'chance';
 
+import Table from 'js/components/table';
 import Avatar from 'js/components/avatar';
 
 import styles from './Playground.scss';
@@ -21,6 +22,7 @@ export default class Playground extends Component {
 	constructor(props) {
 		super(props);
 
+		this.handleClickMatchmaking = this.handleClickMatchmaking.bind(this);
 		this.handleClickNewTable = this.handleClickNewTable.bind(this);
 	}
 
@@ -29,6 +31,10 @@ export default class Playground extends Component {
 	}
 
 	componentDidMount() {
+		this.props.connectLobby();
+	}
+
+	handleClickMatchmaking() {
 
 	}
 
@@ -37,25 +43,6 @@ export default class Playground extends Component {
 			name: Chance().sentence({words: 4}),
 			max_players: 6,
 		});
-	}
-
-	renderUser(user) {
-		const {
-			id,
-			name,
-			gender,
-			custom_photo,
-			avatar,
-		} = user;
-
-		return (
-			<div className={styles('user')}>
-				<p>{id}</p>
-				<p>{name}</p>
-				<p>{gender}</p>
-				<Avatar custom_photo={custom_photo} avatar_id={avatar} />
-			</div>
-		);
 	}
 
 	renderUser(user) {
@@ -94,15 +81,21 @@ export default class Playground extends Component {
 		);
 	}
 
+	renderTable(table) {
+		return (
+			<Table key={table.id} {...table} />
+		);
+	}
+
 	render() {
 		return (
 			<div className={styles('container')}>
 
 				<button
-					className={styles('enter-lobby-button')}
-					onClick={this.props.connectLobby}
+					className={styles('matchmaking-button')}
+					onClick={this.handleClickMatchmaking}
 				>
-					Enter Game Lobby
+					Matchmaking
 				</button>
 
 				<button
@@ -112,10 +105,12 @@ export default class Playground extends Component {
 					New Table
 				</button>
 
-				{this.props.user && this.renderUser(this.props.user)}
-				
 				<ul>
 					{this.props.all_users.map(this.renderOtherUser)}
+				</ul>
+
+				<ul>
+					{this.props.all_tables.map(this.renderTable)}
 				</ul>
 			</div>
 		);

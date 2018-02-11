@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
   name: String,
   gender: String,
   email: String,
@@ -11,7 +12,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.virtual('id').get(function(){
-    return this._id.toHexString();
+	return this._id.toHexString();
 });
 
 UserSchema.set('toJSON', {

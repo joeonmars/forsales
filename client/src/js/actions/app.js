@@ -39,10 +39,11 @@ const Action = {
 		}
 	},
 
-	updateLobby: ({tables, users}) => {
+	updateLobby: ({all_users, all_tables}) => {
 		return {
 			type: Type.UPDATE_LOBBY,
-			all_users: users,
+			all_users,
+			all_tables,
 		}
 	},
 
