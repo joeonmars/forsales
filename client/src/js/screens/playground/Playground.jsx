@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Chance from 'chance';
-import io from 'socket.io-client';
 
 import Avatar from 'js/components/avatar';
 
@@ -16,43 +15,26 @@ export default class Playground extends Component {
 	}
 
 	state = {
-		name: '',
+
 	}
 
 	constructor(props) {
 		super(props);
 
-		this.chance = new Chance();
-
 		this.handleClickNewTable = this.handleClickNewTable.bind(this);
 	}
 
 	componentWillMount() {
-		this.setState({
-			name: this.chance.name(),
-		});
+
 	}
 
 	componentDidMount() {
-		/*
-		const socket = io('http://localhost:4200');
 
-		socket.on('connect', () => {
-			console.log('connect');
-
-			socket.once('server:connected', greeting => {
-				console.log('server:connected', greeting);
-			});
-		});
-
-		socket.on('disconnect', () => {
-			console.log('disconnect');
-		});*/
 	}
 
 	handleClickNewTable() {
 		this.props.newTable({
-			name: this.chance.sentence({words: 4}),
+			name: Chance().sentence({words: 4}),
 			max_players: 6,
 		});
 	}
@@ -76,23 +58,45 @@ export default class Playground extends Component {
 		);
 	}
 
+	renderUser(user) {
+		const {
+			id,
+			name,
+			gender,
+			custom_photo,
+			avatar,
+		} = user;
+
+		return (
+			<div className={styles('user')}>
+				<p>{id}</p>
+				<p>{name}</p>
+				<p>{gender}</p>
+				<Avatar custom_photo={custom_photo} avatar_id={avatar} />
+			</div>
+		);
+	}
+
+	renderOtherUser(user) {
+		const {
+			id,
+			name,
+			gender,
+			custom_photo,
+			avatar,
+		} = user;
+
+		return (
+			<div key={id} className={styles('other-user')}>
+				<p>{name}</p>
+				<Avatar custom_photo={custom_photo} avatar_id={avatar} />
+			</div>
+		);
+	}
+
 	render() {
 		return (
 			<div className={styles('container')}>
-
-				<button
-					className={styles('login-button')}
-					onClick={this.props.loginWithFacebook}
-				>
-					Login with Facebook
-				</button>
-
-				<button
-					className={styles('login-button')}
-					onClick={this.props.loginWithTwitter}
-				>
-					Login with Twitter
-				</button>
 
 				<button
 					className={styles('enter-lobby-button')}
@@ -109,7 +113,10 @@ export default class Playground extends Component {
 				</button>
 
 				{this.props.user && this.renderUser(this.props.user)}
-
+				
+				<ul>
+					{this.props.all_users.map(this.renderOtherUser)}
+				</ul>
 			</div>
 		);
 	}

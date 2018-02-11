@@ -1,26 +1,22 @@
 import { connect } from 'react-redux';
-import Playground from './Playground';
+import LoginScreen from './LoginScreen';
 import { Action } from 'js/actions/app';
 
 const mapStateToProps = (state) => {
 
 	return {
 		user: state.app.user,
-		all_users: state.app.all_users,
 	};
 }
 
 const mapDispatchToProps = (dispatch) => {
 
 	return {
-		ping: () => {
-			dispatch(Action.ping());
+		loginWithFacebook: () => {
+			dispatch(Action.login('facebook'));
 		},
-		connectLobby: () => {
-			dispatch(Action.connectLobby());
-		},
-		newTable: settings => {
-			dispatch(Action.newTable(settings));
+		loginWithTwitter: () => {
+			dispatch(Action.login('twitter'));
 		},
 	};
 }
@@ -28,6 +24,6 @@ const mapDispatchToProps = (dispatch) => {
 const Container = connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(Playground);
+)(LoginScreen);
 
 export default Container;

@@ -4,6 +4,7 @@ const Type = {
 	CONNECT_LOBBY: 'CONNECT_LOBBY',
 	CONNECT_LOBBY_SUCCEED: 'CONNECT_LOBBY_SUCCEED',
 	DISCONNECT_LOBBY: 'DISCONNECT_LOBBY',
+	UPDATE_LOBBY: 'UPDATE_LOBBY',
 	GET_TABLES: 'GET_TABLES',
 	NEW_TABLE: 'NEW_TABLE',
 	NEW_TABLE_SUCCEED: 'NEW_TABLE_SUCCEED',
@@ -35,6 +36,13 @@ const Action = {
 	connectLobbySucceed: () => {
 		return {
 			type: Type.CONNECT_LOBBY_SUCCEED,
+		}
+	},
+
+	updateLobby: ({tables, users}) => {
+		return {
+			type: Type.UPDATE_LOBBY,
+			all_users: users,
 		}
 	},
 

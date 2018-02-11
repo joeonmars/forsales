@@ -2,8 +2,7 @@
 	//font-size: 8rem;
 }
 
-.enter-lobby-button,
-.new-table-button{
+.login-button{
 	margin: 5px;
 	font-size: 14px;
 	border: 1px solid black;
@@ -27,23 +26,6 @@
 
 	img{
 		width: 14rem;
-		margin: 0 auto;
-	}
-}
-
-.other-user{
-	padding: 10px;
-	border: 1px solid black;
-	display: inline-block;
-	text-align: center;
-	width: 100px;
-
-	p{
-		margin: .25rem 0;
-		font-size: 1.2rem;
-	}
-
-	img{
 		margin: 0 auto;
 	}
 }

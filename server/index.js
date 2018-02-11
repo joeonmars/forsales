@@ -1,4 +1,5 @@
 // app.js
+// https://socket.io/docs/emit-cheatsheet/
 const express = require('express');
 const exphbs  = require('express-handlebars');
 const cookieParser = require('cookie-parser');
@@ -6,13 +7,14 @@ const session = require('express-session');
 const app = express();
 const server = require('http').createServer(app);
 
+
 const io = require('socket.io')(server);
 const nsp = io.of('/lobby');
 
+const EventEmitter = require('events');
 const _ = require('lodash');
+const Rx = require('rxjs/Rx');
 const passport = require('./passport');
-
-const User = require('./models/User.js');
 
 
 // Configure view engine to render
@@ -103,28 +105,112 @@ app.get('/user/:user_id', (req, res) => {
 });
 
 
+const User = require('./models/User.js');
 const Table = require('./models/Table.js');
 //const Chance = require('chance');
 
-const all_sockets = {};
+const user_id_list = [];
 const all_tables = {};
 
 
 
-nsp.on('connect', socket => {  
+
+const lobby_emitter = new EventEmitter();
+lobby_emitter.on('CONNECT_CLIENT', socket => {
+	console.log(`socket connected: ${socket.id}`);
+});
+lobby_emitter.on('DISCONNECT_CLIENT', socket => {
+	console.log(`socket disconnected: ${socket.id}`);
+});
 
 
-    console.log('Client connected!', socket.id);
-    all_sockets[socket.id] = socket;
+nsp.on('connect', socket => {
+	lobby_emitter.emit('CONNECT_CLIENT', socket);
+});
 
 
-
-    socket.on('GET_TABLES', (payload, callback) => {
-    	console.log(`${socket.id} asked for tables.`);
-    	callback(all_tables);
+Rx.Observable
+	.fromEvent(lobby_emitter, 'CONNECT_CLIENT')
+	.switchMap(socket => {
+		registerSocket(socket);
+		listenForSocket(socket);
+		return Rx.Observable.of(socket);
+	})
+	.auditTime(500)
+	.switchMap(socket => observeLobbyUpdate())
+	.subscribe(results => {
+		const data = {
+			tables: results[0],
+			users: results[1],
+		};
+		nsp.emit('UPDATE_LOBBY', data);
 	});
 
+Rx.Observable
+	.fromEvent(lobby_emitter, 'DISCONNECT_CLIENT')
+	.switchMap(socket => {
+		unregisterSocket(socket);
+		return Rx.Observable.of(socket);
+	})
+	.auditTime(500)
+	.switchMap(socket => observeLobbyUpdate())
+	.subscribe(results => {
+		const data = {
+			tables: results[0],
+			users: results[1],
+		};
+		nsp.emit('UPDATE_LOBBY', data);
+	});
 
+const observeLobbyUpdate = () => {
+	const users_promise = User.findByIdList(user_id_list);
+	const all_promise = Promise.all([all_tables, users_promise]);
+	return Rx.Observable.fromPromise(all_promise);
+}
+
+
+const registerSocket = socket => {
+	const {
+		user_id,
+	} = socket.handshake.query;
+
+    // Add user id to users list if not exist
+	if (!_.includes(user_id_list, user_id)) {
+		user_id_list.push(user_id);
+	}
+
+	console.log(`connected user_id: ${user_id}`);
+}
+
+const unregisterSocket = socket => {
+	const {
+		user_id,
+	} = socket.handshake.query;
+
+	// Remove user id from users list
+	_.pull(user_id_list, user_id);
+
+	console.log(`disconnected user_id: ${user_id}`);
+}
+
+const listenForSocket = socket => {
+
+	/*
+    socket.on('GET_LOBBY_INFO', (payload, callback) => {
+    	console.log(`${socket.id} asked for lobby info.`);
+
+    	// Get all users via promise
+		const all_users_promise = User.findByIdList(user_id_list);
+		
+		// Send both tables and users to client
+		Promise.all([all_tables, all_users_promise])
+			.then(results => {
+				callback({
+					tables: results[0],
+					users: results[1],
+				});
+			});
+	});*/
 
     socket.on('NEW_TABLE', (payload, callback) => {
     	console.log(`${socket.id} creates a new table.`);
@@ -146,12 +232,10 @@ nsp.on('connect', socket => {
     	callback(new_table);
 	});
 
-
     socket.on('disconnect', () => {
-    	console.log('Client disconnect!', socket.id);
-		delete all_sockets[socket.id];
+	    lobby_emitter.emit('DISCONNECT_CLIENT', socket);
 	});
-});
+}
 
 
 server.listen(4200);

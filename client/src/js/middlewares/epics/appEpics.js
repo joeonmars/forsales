@@ -6,6 +6,11 @@ import Popup from 'popup-window';
 import { Type, Action } from 'js/actions/app';
 
 
+const getSocket = (store) => {
+	return store.getState().app.socket;
+}
+
+
 const observeSocket = (socket, name, payload) => {
 	return Observable.create(observer => {
 		socket.emit(name, payload, data => {
@@ -20,19 +25,16 @@ const ping = (action$, store) => {
 	return action$.pipe(
   		ofType(Type.PING),
   		delay(1000),
-		mapTo(Action.pong()),
+			mapTo(Action.pong()),
 	);
 }
 
 const connectLobby = (action$, store) => {
 
-	const {
-		socket,
-	} = store.getState().app;
-
 	return action$.pipe(
   		ofType(Type.CONNECT_LOBBY),
   		switchMap(action => {
+				const socket = getSocket(store);
   			socket.sendBuffer.length = 0;
   			socket.receiveBuffer.length = 0;
 
@@ -42,9 +44,7 @@ const connectLobby = (action$, store) => {
   				return Observable.fromEvent(socket.connect(), 'connect');
   			}
   		}),
-  		switchMap(action => observeSocket(socket, 'GET_TABLES')),
-  		map(tables => {
-  			console.log('tables', tables);
+  		map(socket => {
   			return Action.connectLobbySucceed();
   		}),
 	);
@@ -52,15 +52,31 @@ const connectLobby = (action$, store) => {
 
 const disconnectLobby = (action$, store) => {
 
-	const {
-		socket,
-	} = store.getState().app;
-
 	return action$.pipe(
   		ofType(Type.CONNECT_LOBBY),
-  		switchMap(action => Observable.fromEvent(socket, 'disconnect')),
+  		switchMap(action => {
+  			const socket = getSocket(store);
+  			return Observable.fromEvent(socket, 'disconnect');
+  		}),
   		map(() => {
   			return Action.disconnectLobby();
+  		}),
+	);
+}
+
+const updateLobby = (action$, store) => {
+
+	return action$.pipe(
+  		ofType(Type.CONNECT_LOBBY_SUCCEED),
+  		switchMap(action => {
+  			const socket = getSocket(store);
+  			return Observable.fromEvent(socket, 'UPDATE_LOBBY');
+  		}),
+  		map(({tables, users}) => {
+  			return Action.updateLobby({
+  				tables,
+  				users,
+  			});
   		}),
 	);
 }
@@ -100,13 +116,12 @@ const login = (action$, store) => {
 
 const newTable = (action$, store) => {
 
-	const {
-		socket,
-	} = store.getState().app;
-
 	return action$.pipe(
   		ofType(Type.NEW_TABLE),
-  		switchMap(action => observeSocket(socket, 'NEW_TABLE', action.settings)),
+  		switchMap(action => {
+  			const socket = getSocket(store);
+  			return observeSocket(socket, 'NEW_TABLE', action.settings);
+  		}),
   		map(table => {
   			console.log('table', table);
   			return Action.newTableSucceed(table);
@@ -119,5 +134,6 @@ export default [
 	login,
 	connectLobby,
 	disconnectLobby,
+	updateLobby,
 	newTable,
 ];

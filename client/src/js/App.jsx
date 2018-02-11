@@ -1,6 +1,7 @@
 const React = require('react');
 import { Provider } from 'react-redux';
-import { HashRouter as Router, Switch } from 'react-router-dom';
+import { MemoryRouter, Route, Switch } from 'react-router-dom';
+import LoginScreen from 'js/screens/login';
 import Playground from 'js/screens/playground';
 
 import 'scss/global';
@@ -8,11 +9,15 @@ import 'scss/global';
 
 const App = ({ store, history }) => (
 	<Provider store={store}>
-		<Router>
+		<MemoryRouter
+			initialEntries={[ '/login', '/playground' ]}
+  			initialIndex={0}
+  		>
 			<Switch>
-				<Playground />
+				<Route path='/login' component={LoginScreen} />
+				<Route path='/playground' component={Playground} />
 			</Switch>
-		</Router>
+		</MemoryRouter>
 	</Provider>
 );
 
