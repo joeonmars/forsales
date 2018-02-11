@@ -8,6 +8,7 @@ const mapStateToProps = (state) => {
 		user: state.app.user,
 		all_users: state.app.all_users,
 		all_tables: state.app.all_tables,
+		table: state.app.table,
 	};
 }
 

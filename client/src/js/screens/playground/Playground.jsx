@@ -112,6 +112,7 @@ export default class Playground extends Component {
 				<ul>
 					{this.props.all_tables.map(this.renderTable)}
 				</ul>
+
 			</div>
 		);
 	}

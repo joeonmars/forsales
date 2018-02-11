@@ -218,11 +218,12 @@ const listenForSocket = socket => {
 			max_players,
 			name,
 			owner: user_id,
+			users: [user_id],
 			players: [user_id],
 		});
 
 		Table.populate(table, {
-			path: 'owner players',
+			path: 'owner users players',
 			select: 'id name custom_photo avatar',
 		}).then(t => {
 			callback(t);

@@ -2,16 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { createEpicMiddleware } from 'redux-observable';
-import createHashHistory from 'history/createHashHistory';
+import { createMemoryHistory } from 'history';
 import reducers from 'js/reducers';
+import createRouteMiddleware from 'js/middlewares/routeMiddleware';
 import epics from 'js/middlewares/epics';
 import App from './App.jsx';
 
 
+
 window.addEventListener('load', () => {
+
+	const history = createMemoryHistory({
+		initialEntries: [ '/login', '/playground' ],
+		initialIndex: 0,
+	});
 
 	const middlewares = [
 		createEpicMiddleware(epics),
+		createRouteMiddleware(history),
 	];
 
 	const composedCreateStore = compose(
@@ -19,10 +27,7 @@ window.addEventListener('load', () => {
       window.devToolsExtension(),
     )(createStore);
 
-    const history = createHashHistory();
-
     const initial_state = getClientState({
-		history
 	});
 
 	const store = composedCreateStore(reducers, initial_state);
@@ -32,7 +37,7 @@ window.addEventListener('load', () => {
 });
 
 
-const getClientState = ({history}) => {
+const getClientState = () => {
 
 	return {
 		app: {
@@ -40,6 +45,7 @@ const getClientState = ({history}) => {
 			login_succeeded: false,
 			socket: null,
 			user: null,
+			table: null,
 			all_users: [],
 			all_tables: [],
 		},

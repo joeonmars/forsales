@@ -30,7 +30,7 @@ export default class Table extends Component {
 	}
 
 	handleClickTable(e) {
-
+		console.log("CLICK TABLE!");
 	}
 
 	renderSeat(slot, index) {
@@ -60,7 +60,7 @@ export default class Table extends Component {
 		const container_classname = styles('container');
 
 		return (
-			<div className={container_classname}>
+			<div className={container_classname} onClick={this.handleClickTable}>
 				<div className={styles('table')}>
 					<h1>Table</h1>
 					<h2>{this.props.name}</h2>

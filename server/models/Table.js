@@ -9,6 +9,7 @@ const TableSchema = new Schema({
   max_players: Number,
   name: String,
   owner: { type: Schema.Types.ObjectId, ref: 'User' },
+  users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   players: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 });
 

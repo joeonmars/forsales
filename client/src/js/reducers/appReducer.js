@@ -39,6 +39,12 @@ const appReducer = (state = {}, action) => {
         all_tables: action.all_tables || state.all_tables,
       }
 
+    case Type.NEW_TABLE_SUCCEED:
+      return {
+        ...state,
+        table: action.table,
+      }
+
     default:
     	return state;
   }
