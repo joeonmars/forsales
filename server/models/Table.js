@@ -9,8 +9,14 @@ const TableSchema = new Schema({
   max_players: Number,
   name: String,
   owner: Schema.Types.ObjectId,
-  users: [Schema.Types.ObjectId],
-  players: [Schema.Types.ObjectId],
+  users: {
+    type: [Schema.Types.ObjectId],
+    default: [],
+  },
+  players: {
+    type: [Schema.Types.ObjectId],
+    default: [],
+  },
 });
 
 TableSchema.virtual('owner_detail', {
@@ -33,8 +39,17 @@ TableSchema.virtual('players_detail', {
 });
 
 
-TableSchema.statics.findAndPopulate = function (selector = {}) {
-  return this.find(selector).populate({
+TableSchema.statics.findAndPopulate = function (conditions = {}) {
+  return this.find(conditions).populate({
+    path: 'owner_detail users_detail players_detail',
+    select: 'id name custom_photo avatar',
+  });
+}
+
+TableSchema.statics.updateAndPopulateOne = function (conditions, updates) {
+  return this.findOneAndUpdate(conditions, updates, {
+    new: true,
+  }).populate({
     path: 'owner_detail users_detail players_detail',
     select: 'id name custom_photo avatar',
   });

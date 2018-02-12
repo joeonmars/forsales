@@ -163,11 +163,21 @@ Rx.Observable
 				if (table) {
 					return observeRemoveUserFromTable(table._id, user_id);
 				} else {
-					return Rx.Observable.of(table);
+					return Rx.Observable.of({
+						table: null,
+						table_id: null,
+					});
 				}
 			});
 	})
-	.switchMap(() => observeLobbyUpdate())
+	.switchMap(({table, table_id}) => {
+		if (table && table_id) {
+			const channel = getTableChannel(table_id);
+			nsp.in(channel).emit('UPDATE_TABLE', table);
+		}
+
+		return observeLobbyUpdate();
+	})
 	.subscribe(results => {
 		const data = {
 			tables: results[0],
@@ -177,9 +187,34 @@ Rx.Observable
 	});
 
 Rx.Observable
-	.fromEvent(lobby_emitter, 'NEW_TABLE')
-	.switchMap(table => {
-		console.log(`user ${table.owner} created a new table`);
+	.fromEvent(lobby_emitter, 'JOIN_TABLE')
+	.switchMap(({table_id, user_id, callback}) => {
+		const promise = Table.updateAndPopulateOne({
+			_id: table_id,
+		}, {
+			$push: {
+				users: user_id,
+			},
+		});
+
+		return Rx.Observable.fromPromise(promise)
+			.map(table => {
+				return {
+					table,
+					user_id,
+					callback,
+				}
+			});
+	})
+	.switchMap(({table, user_id, callback}) => {
+		const table_id = table._id;
+		console.log(`user ${user_id} joined table: ${table_id}`);
+		
+		callback(table);
+		
+		const channel = getTableChannel(table_id);
+		nsp.in(channel).emit('UPDATE_TABLE', table);
+
 		const table_promise = Table.findAndPopulate();
 		return Rx.Observable.fromPromise(table_promise);
 	})
@@ -190,6 +225,39 @@ Rx.Observable
 		nsp.emit('UPDATE_LOBBY', data);
 	});
 
+
+Rx.Observable
+	.fromEvent(lobby_emitter, 'LEAVE_TABLE')
+	.switchMap(({table_id, user_id, callback}) => {
+		return observeRemoveUserFromTable(table_id, user_id)
+			.map(({table, table_id, user_id}) => {
+				return {
+					table,
+					table_id,
+					user_id,
+					callback,
+				}
+			});
+	})
+	.switchMap(({table, table_id, user_id, callback}) => {
+		console.log(`User ${user_id} left table ${table_id}`);
+
+		if (callback) {
+			callback(table_id);
+		}
+
+		const channel = getTableChannel(table_id);
+		nsp.in(channel).emit('UPDATE_TABLE', table);
+
+		return observeLobbyUpdate();
+	})
+	.subscribe(results => {
+		const data = {
+			tables: results[0],
+			users: results[1],
+		};
+		nsp.emit('UPDATE_LOBBY', data);
+	});
 
 
 
@@ -203,7 +271,7 @@ const observeRemoveUserFromTable = (table_id, user_id) => {
 
 			const promise = is_last_user ? 
 				Table.remove({ _id: table_id }) : 
-				Table.update({
+				Table.updateAndPopulateOne({
 					_id: table_id,
 				}, {
 					$pull: {
@@ -217,43 +285,14 @@ const observeRemoveUserFromTable = (table_id, user_id) => {
 
 			return Rx.Observable.fromPromise(promise);
 		})
-		.map(() => {
+		.map(table => {
 			return {
+				table,
 				table_id,
 				user_id,
 			}
 		});
 }
-
-
-
-Rx.Observable
-	.fromEvent(lobby_emitter, 'LEAVE_TABLE')
-	.switchMap(({table_id, user_id, callback}) => {
-		return observeRemoveUserFromTable(table_id, user_id)
-			.map(({table_id, user_id}) => {
-				return {
-					table_id,
-					user_id,
-					callback,
-				}
-			});
-	})
-	.switchMap(({table_id, user_id, callback}) => {
-		console.log(`User ${user_id} left table ${table_id}`);
-		if (callback) {
-			callback(table_id);
-		}
-
-		return observeLobbyUpdate();
-	})
-	.subscribe(results => {
-		const data = {
-			tables: results[0],
-			users: results[1],
-		};
-		nsp.emit('UPDATE_LOBBY', data);
-	});
 
 const observeLobbyUpdate = () => {
 	const users_promise = User.findByIdList(user_id_list);
@@ -262,6 +301,9 @@ const observeLobbyUpdate = () => {
 	return Rx.Observable.fromPromise(all_promise);
 }
 
+const getTableChannel = table_id => {
+	return `table-${table_id}`;
+}
 
 const registerSocket = socket => {
 	const {
@@ -304,27 +346,37 @@ const listenForSocket = socket => {
 			max_players,
 			name,
 			owner: user_id,
-			users: [user_id],
 			players: [user_id],
 		});
 
     	table.save().then(table => {
-			Table.findAndPopulate({
-				_id: table._id,
-			}).then(results => {
-				const t = results[0];
-				const channel = `table-${t.id}`;
-				socket.join(channel, () => {
-					console.log(`user: ${user_id} joined ${channel}.`);
-					callback(t);
-					lobby_emitter.emit('NEW_TABLE', t);
+    		const table_id = table._id;
+    		console.log(`user ${table.owner} created a new table: ${table_id}`);
+
+			const channel = getTableChannel(table_id);
+			socket.join(channel, () => {
+				lobby_emitter.emit('JOIN_TABLE', {
+					table_id,
+					user_id,
+					callback,
 				});
 			});
     	});
 	});
 
+	socket.on('JOIN_TABLE', (table_id, callback) => {
+		const channel = getTableChannel(table_id);
+		socket.join(channel, () => {
+			lobby_emitter.emit('JOIN_TABLE', {
+				table_id,
+				user_id,
+				callback,
+			});
+		});
+	});
+
 	socket.on('LEAVE_TABLE', (table_id, callback) => {
-		const channel = `table-${table_id}`;
+		const channel = getTableChannel(table_id);
 		socket.leave(channel, () => {
 			lobby_emitter.emit('LEAVE_TABLE', {
 				table_id,

@@ -22,8 +22,10 @@ export default class Playground extends Component {
 	constructor(props) {
 		super(props);
 
+		this.renderTable = this.renderTable.bind(this);
 		this.handleClickMatchmaking = this.handleClickMatchmaking.bind(this);
 		this.handleClickNewTable = this.handleClickNewTable.bind(this);
+		this.handleClickTable = this.handleClickTable.bind(this);
 	}
 
 	componentWillMount() {
@@ -43,6 +45,10 @@ export default class Playground extends Component {
 			name: Chance().sentence({words: 4}),
 			max_players: 6,
 		});
+	}
+
+	handleClickTable(table_id) {
+		this.props.joinTable(table_id);
 	}
 
 	renderUser(user) {
@@ -83,7 +89,7 @@ export default class Playground extends Component {
 
 	renderTable(table) {
 		return (
-			<Table key={table.id} {...table} />
+			<Table key={table.id} {...table} onClick={this.handleClickTable} />
 		);
 	}
 

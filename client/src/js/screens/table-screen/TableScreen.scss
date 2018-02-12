@@ -1,0 +1,17 @@
+.container {
+	h1{
+		font-size: 3rem;
+	}
+}
+
+.user{
+	display: inline-block;
+	margin: 1rem;
+	width: 10rem;
+	padding: 0 1rem 1rem;
+	border: 1px solid black;
+
+	p{
+		line-height: 2;
+	}
+}

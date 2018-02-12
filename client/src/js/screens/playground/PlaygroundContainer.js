@@ -21,6 +21,9 @@ const mapDispatchToProps = (dispatch) => {
 		newTable: settings => {
 			dispatch(Action.newTable(settings));
 		},
+		joinTable: table_id => {
+			dispatch(Action.joinTable(table_id));
+		},
 	};
 }
 

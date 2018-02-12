@@ -114,8 +114,21 @@ const newTable = (action$, store) => {
   			return observeSocketEmit(socket, 'NEW_TABLE', action.settings);
   		}),
   		map(table => {
-  			console.log('table', table);
   			return Action.newTableSucceed(table);
+  		}),
+	);
+}
+
+const joinTable = (action$, store) => {
+
+	return action$.pipe(
+  		ofType(Type.JOIN_TABLE),
+  		switchMap(action => {
+  			const socket = getSocket(store);
+  			return observeSocketEmit(socket, 'JOIN_TABLE', action.table_id);
+  		}),
+  		map(table_id => {
+  			return Action.joinTableSucceed(table_id);
   		}),
 	);
 }
@@ -134,11 +147,28 @@ const leaveTable = (action$, store) => {
 	);
 }
 
+const updateTable = (action$, store) => {
+
+	return action$.pipe(
+  		ofType(Type.NEW_TABLE_SUCCEED, Type.JOIN_TABLE_SUCCEED),
+  		switchMap(action => {
+  			const socket = getSocket(store);
+  			return Observable.fromEvent(socket, 'UPDATE_TABLE')
+  				.takeUntil(action$.ofType(Type.LEAVE_TABLE_SUCCEED));
+  		}),
+  		map(table => {
+  			return Action.updateTable(table);
+  		}),
+	);
+}
+
 export default [
 	login,
 	connectLobby,
 	disconnectLobby,
 	updateLobby,
 	newTable,
+	joinTable,
 	leaveTable,
+	updateTable,
 ];

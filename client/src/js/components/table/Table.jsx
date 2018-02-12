@@ -10,10 +10,16 @@ import styles from './Table.scss';
 export default class Table extends Component {
 
 	static propTypes = {
+		id: PropTypes.string,
 		players: PropTypes.array,
 		owner: PropTypes.object,
 		max_players: PropTypes.number,
 		name: PropTypes.string,
+		onClick: PropTypes.func,
+	}
+
+	static defaultProps = {
+		onClick: table => {},
 	}
 
 	state = {
@@ -27,10 +33,6 @@ export default class Table extends Component {
 
 		this.renderSeat = this.renderSeat.bind(this);
 		this.handleClickTable = this.handleClickTable.bind(this);
-	}
-
-	handleClickTable(e) {
-		console.log("CLICK TABLE!");
 	}
 
 	renderSeat(slot, index) {
@@ -53,6 +55,10 @@ export default class Table extends Component {
 				}
 			</div>
 		);
+	}
+
+	handleClickTable() {
+		this.props.onClick(this.props.id);
 	}
 
 	render() {

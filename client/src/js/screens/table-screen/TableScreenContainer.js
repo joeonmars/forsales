@@ -4,8 +4,21 @@ import TableScreen from './TableScreen';
 
 const mapStateToProps = (state) => {
 
+	const {
+		id,
+		name,
+		users,
+		players,
+		owner,
+	} = state.app.table;
+
 	return {
-		table: state.app.table,
+		table_id: id,
+		table_name: name,
+		users,
+		players,
+		owner,
+		is_owner: (owner.id === state.app.user.id),
 	};
 }
 

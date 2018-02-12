@@ -4,7 +4,6 @@ const Type = {
 	CONNECT_LOBBY_SUCCEED: 'CONNECT_LOBBY_SUCCEED',
 	DISCONNECT_LOBBY: 'DISCONNECT_LOBBY',
 	UPDATE_LOBBY: 'UPDATE_LOBBY',
-	GET_TABLES: 'GET_TABLES',
 	NEW_TABLE: 'NEW_TABLE',
 	NEW_TABLE_SUCCEED: 'NEW_TABLE_SUCCEED',
 	LOGIN: 'LOGIN',
@@ -15,6 +14,7 @@ const Type = {
 	JOIN_TABLE_SUCCEED: 'JOIN_TABLE_SUCCEED',
 	LEAVE_TABLE: 'LEAVE_TABLE',
 	LEAVE_TABLE_SUCCEED: 'LEAVE_TABLE_SUCCEED',
+	UPDATE_TABLE: 'UPDATE_TABLE',
 }
 
 const Action = {
@@ -50,26 +50,6 @@ const Action = {
 		}
 	},
 
-	getTables: () => {
-		return {
-			type: Type.GET_TABLES,
-		}
-	},
-
-	newTable: settings => {
-		return {
-			type: Type.NEW_TABLE,
-			settings,
-		}
-	},
-
-	newTableSucceed: table => {
-		return {
-			type: Type.NEW_TABLE_SUCCEED,
-			table,
-		}
-	},
-
 	login: platform => {
 		return {
 			type: Type.LOGIN,
@@ -98,6 +78,20 @@ const Action = {
 		}
 	},
 
+	newTable: settings => {
+		return {
+			type: Type.NEW_TABLE,
+			settings,
+		}
+	},
+
+	newTableSucceed: table => {
+		return {
+			type: Type.NEW_TABLE_SUCCEED,
+			table,
+		}
+	},
+
 	joinTable: table_id => {
 		return {
 			type: Type.JOIN_TABLE,
@@ -105,10 +99,10 @@ const Action = {
 		}
 	},
 
-	joinTableSucceed: table_id => {
+	joinTableSucceed: table => {
 		return {
 			type: Type.JOIN_TABLE_SUCCEED,
-			table_id,
+			table,
 		}
 	},
 
@@ -123,6 +117,13 @@ const Action = {
 		return {
 			type: Type.LEAVE_TABLE_SUCCEED,
 			table_id,
+		}
+	},
+
+	updateTable: table => {
+		return {
+			type: Type.UPDATE_TABLE,
+			table,
 		}
 	},
 }

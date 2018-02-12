@@ -40,6 +40,8 @@ const appReducer = (state = {}, action) => {
       }
 
     case Type.NEW_TABLE_SUCCEED:
+    case Type.JOIN_TABLE_SUCCEED:
+    case Type.UPDATE_TABLE:
       return {
         ...state,
         table: action.table,
