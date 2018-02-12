@@ -11,13 +11,18 @@ const UserSchema = new Schema({
   avatar: String,
 });
 
-UserSchema.virtual('id').get(function(){
-	return this._id.toHexString();
-});
-
 UserSchema.set('toJSON', {
     virtuals: true,
 });
+
+UserSchema.options.toJSON = {
+    transform: function(doc, ret, options) {
+        ret.id = doc._id;
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+    }
+};
 
 UserSchema.statics.findByIdList = function (id_list) {
 	const id_arr = id_list.map(id => new mongoose.Types.ObjectId(id));

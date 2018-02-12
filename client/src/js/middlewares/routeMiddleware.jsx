@@ -10,6 +10,10 @@ export default history => {
 				history.push('/table');
 				break;
 
+			case Type.LEAVE_TABLE_SUCCEED:
+				history.push('/playground');
+				break;
+
 			default:
 				break;
 		}

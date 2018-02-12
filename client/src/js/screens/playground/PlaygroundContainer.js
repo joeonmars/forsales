@@ -15,9 +15,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
 
 	return {
-		ping: () => {
-			dispatch(Action.ping());
-		},
 		connectLobby: () => {
 			dispatch(Action.connectLobby());
 		},

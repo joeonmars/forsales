@@ -32,6 +32,8 @@
   }
 
   button {
+    cursor: pointer;
+    /*
     border: none;
     outline: none;
     margin: 0;
@@ -42,8 +44,7 @@
     -webkit-tap-highlight-color: transparent;
     @include user-select('none');
     @include appearance(none);
-    cursor: pointer;
-    font-size: inherit;
+    font-size: inherit;*/
   }
 
   video{

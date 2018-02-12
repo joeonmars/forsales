@@ -11,22 +11,13 @@ const getSocket = (store) => {
 }
 
 
-const observeSocket = (socket, name, payload) => {
+const observeSocketEmit = (socket, name, payload) => {
 	return Observable.create(observer => {
 		socket.emit(name, payload, data => {
 			observer.next(data);
 			observer.complete();
 		});
 	});
-}
-
-
-const ping = (action$, store) => {
-	return action$.pipe(
-  		ofType(Type.PING),
-  		delay(1000),
-			mapTo(Action.pong()),
-	);
 }
 
 const connectLobby = (action$, store) => {
@@ -120,7 +111,7 @@ const newTable = (action$, store) => {
   		ofType(Type.NEW_TABLE),
   		switchMap(action => {
   			const socket = getSocket(store);
-  			return observeSocket(socket, 'NEW_TABLE', action.settings);
+  			return observeSocketEmit(socket, 'NEW_TABLE', action.settings);
   		}),
   		map(table => {
   			console.log('table', table);
@@ -129,11 +120,25 @@ const newTable = (action$, store) => {
 	);
 }
 
+const leaveTable = (action$, store) => {
+
+	return action$.pipe(
+  		ofType(Type.LEAVE_TABLE),
+  		switchMap(action => {
+  			const socket = getSocket(store);
+  			return observeSocketEmit(socket, 'LEAVE_TABLE', action.table_id);
+  		}),
+  		map(table_id => {
+  			return Action.leaveTableSucceed(table_id);
+  		}),
+	);
+}
+
 export default [
-	ping,
 	login,
 	connectLobby,
 	disconnectLobby,
 	updateLobby,
 	newTable,
+	leaveTable,
 ];

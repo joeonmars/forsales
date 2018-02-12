@@ -1,5 +1,4 @@
 const Type = {
-	PING: 'PING',
 	PONG: 'PONG',
 	CONNECT_LOBBY: 'CONNECT_LOBBY',
 	CONNECT_LOBBY_SUCCEED: 'CONNECT_LOBBY_SUCCEED',
@@ -12,15 +11,13 @@ const Type = {
 	LOGIN_SUCCEED: 'LOGIN_SUCCEED',
 	FETCH_USER_PROFILE: 'FETCH_USER_PROFILE',
 	FETCH_USER_PROFILE_SUCCEED: 'FETCH_USER_PROFILE_SUCCEED',
+	JOIN_TABLE: 'JOIN_TABLE',
+	JOIN_TABLE_SUCCEED: 'JOIN_TABLE_SUCCEED',
+	LEAVE_TABLE: 'LEAVE_TABLE',
+	LEAVE_TABLE_SUCCEED: 'LEAVE_TABLE_SUCCEED',
 }
 
 const Action = {
-	ping: () => {
-		return {
-			type: Type.PING,
-		}
-	},
-
 	pong: () => {
 		return {
 			type: Type.PONG,
@@ -98,6 +95,34 @@ const Action = {
 		return {
 			type: Type.FETCH_USER_PROFILE_SUCCEED,
 			user,
+		}
+	},
+
+	joinTable: table_id => {
+		return {
+			type: Type.JOIN_TABLE,
+			table_id,
+		}
+	},
+
+	joinTableSucceed: table_id => {
+		return {
+			type: Type.JOIN_TABLE_SUCCEED,
+			table_id,
+		}
+	},
+
+	leaveTable: table_id => {
+		return {
+			type: Type.LEAVE_TABLE,
+			table_id,
+		}
+	},
+
+	leaveTableSucceed: table_id => {
+		return {
+			type: Type.LEAVE_TABLE_SUCCEED,
+			table_id,
 		}
 	},
 }

@@ -5,14 +5,16 @@ import TableScreen from './TableScreen';
 const mapStateToProps = (state) => {
 
 	return {
-
+		table: state.app.table,
 	};
 }
 
 const mapDispatchToProps = (dispatch) => {
 
 	return {
-		
+		leaveTable: table_id => {
+			dispatch(Action.leaveTable(table_id));
+		},
 	};
 }
 

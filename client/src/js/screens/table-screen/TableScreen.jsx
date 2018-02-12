@@ -18,6 +18,7 @@ export default class TableScreen extends Component {
 	constructor(props) {
 		super(props);
 
+		this.handleClickLeave = this.handleClickLeave.bind(this);
 	}
 
 	componentWillMount() {
@@ -28,10 +29,21 @@ export default class TableScreen extends Component {
 
 	}
 
+	handleClickLeave() {
+		this.props.leaveTable(this.props.table.id);
+	}
+
 	render() {
 		return (
 			<div className={styles('container')}>
 				HELLO TABLE!
+
+				<button
+					className={styles('leave-button')}
+					onClick={this.handleClickLeave}
+				>
+					Leave Table
+				</button>
 			</div>
 		);
 	}
